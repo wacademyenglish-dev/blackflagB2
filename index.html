@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AC BLACK FLAG: THE REMAKE | B2 English Lesson</title>
+    
+    <!-- Fonts: Pirata One for titles, Merriweather for text -->
+    <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pirate: {
+                            gold: '#d4af37',
+                            darkgold: '#997a00',
+                            blue: '#0f172a',
+                            ocean: '#082f49',
+                            red: '#880000',
+                            wood: '#2c1e16',
+                            parchment: '#f4e4bc'
+                        }
+                    },
+                    fontFamily: {
+                        title: ['Pirata One', 'cursive'],
+                        body: ['Merriweather', 'serif'],
+                        ui: ['Cinzel', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Core Styles */
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #140a05; color: #f4e4bc; overflow: hidden; }
+        
+        #app-bg {
+            position: fixed; inset: 0; z-index: -2;
+            background: 
+                radial-gradient(circle at center, rgba(44, 30, 22, 0.85) 0%, rgba(10, 5, 2, 0.98) 100%),
+                url('https://images.unsplash.com/photo-1532153975070-2e9ab71f1b8e?q=80&w=2000');
+            background-size: cover;
+            background-position: center;
+            background-blend-mode: multiply;
+        }
+
+        /* Glassmorphism - Pirate Style */
+        .glass {
+            background: rgba(25, 15, 10, 0.75);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(212, 175, 55, 0.05);
+        }
+        .glass-panel { border-radius: 4px; }
+        
+        /* Typography FX */
+        .text-glow-gold { text-shadow: 0 0 15px rgba(212, 175, 55, 0.8); }
+        .text-glow-ocean { text-shadow: 0 0 15px rgba(14, 165, 233, 0.8); }
+        
+        /* Page Transitions & Layout */
+        .page { 
+            display: none; opacity: 0; transition: opacity 0.5s ease; 
+            width: 100%; height: 100%; position: absolute; top:0; left:0; 
+            overflow-y: auto; overflow-x: hidden;
+            padding: 6rem 1rem 7rem 1rem; box-sizing: border-box;
+            justify-content: center; align-items: center;
+        }
+        .page.active { display: flex; opacity: 1; z-index: 10; animation: fadeIn 0.6s ease forwards; }
+        
+        .page-content {
+            width: 100%; max-width: 1200px; margin: auto;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+
+        /* Ocean Particles */
+        #particle-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        .particle-ember { position: absolute; background: #d4af37; border-radius: 50%; opacity: 0.5; animation: floatUp linear infinite; box-shadow: 0 0 8px #d4af37; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes floatUp { 0% { transform: translateY(100vh) scale(0) translateX(0); opacity: 0; } 50% { opacity: 0.5; transform: translateX(20px); } 100% { transform: translateY(-10vh) scale(1) translateX(-20px); opacity: 0; } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
+        .shake-fx { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        
+        @keyframes cannon-fire { 0% { background-color: rgba(255,100,0,0); } 30% { background-color: rgba(255,100,0,0.4); } 100% { background-color: rgba(0,0,0,0); } }
+        .dmg-overlay { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9999; animation: cannon-fire 0.5s ease; }
+
+        /* UI Buttons */
+        .btn-pirate {
+            background: linear-gradient(to bottom, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.3) 100%);
+            border: 1px solid #d4af37; color: #f4e4bc; padding: 14px 28px;
+            font-family: 'Cinzel', serif; text-transform: uppercase; letter-spacing: 2px; font-weight: bold;
+            cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; border-radius: 2px;
+        }
+        .btn-pirate:hover { background: rgba(212, 175, 55, 0.5); box-shadow: 0 0 20px rgba(212, 175, 55, 0.6); transform: translateY(-2px); color: #fff; }
+        .btn-pirate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* Q&A Accordions */
+        .qa-block .answer-box { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out, opacity 0.4s ease; opacity: 0; }
+        .qa-block.revealed .answer-box { max-height: 500px; opacity: 1; padding-top: 1rem; margin-top: 1rem; border-top: 1px solid rgba(212, 175, 55, 0.3); }
+        .qa-block.revealed .reveal-hint { display: none; opacity: 0; }
+
+        /* Sandbox Elements */
+        .sandbox-slot { transition: transform 0.2s, background 0.3s; user-select: none; }
+        .sandbox-slot:active { transform: scale(0.95); }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.8); }
+        ::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <div id="app-bg"></div>
+    <div id="particle-container"></div>
+    <div id="dmg-flash"></div>
+
+    <!-- GLOBAL HUD -->
+    <header class="fixed top-0 left-0 w-full glass z-50 flex justify-between items-center p-3 px-8 border-b border-pirate-gold/40 bg-pirate-wood/90">
+        <div class="flex items-center space-x-4 w-1/3">
+            <i class="fa-solid fa-ship text-pirate-gold text-2xl" id="hp-icon"></i>
+            <div class="w-36 h-4 bg-gray-900 rounded-sm overflow-hidden border border-pirate-gold/50 shadow-[inset_0_0_10px_rgba(0,0,0,0.8)]">
+                <div id="hp-bar" class="h-full bg-green-600 w-full transition-all duration-300"></div>
+            </div>
+            <span class="font-ui text-pirate-gold font-bold tracking-widest text-lg" id="hp-text">100%</span>
+        </div>
+        
+        <div class="text-center w-1/3 flex flex-col items-center">
+            <div class="font-ui text-[11px] tracking-[0.4em] text-gray-400 mb-1 text-glow-gold">THE JACKDAW</div>
+            <div class="font-ui text-2xl font-bold text-white text-glow-gold uppercase leading-none" id="hud-player-name">[ UNKNOWN ]</div>
+            <div class="text-xs text-pirate-gold uppercase tracking-widest mt-1 font-body" id="hud-player-class">Swab</div>
+        </div>
+
+        <div class="flex items-center justify-end space-x-4 w-1/3">
+            <span class="font-ui text-3xl font-bold text-white" id="xp-counter">0</span>
+            <span class="font-ui text-[10px] tracking-widest text-pirate-gold leading-tight text-right">GOLD<br>REALES</span>
+            <i class="fa-solid fa-coins text-pirate-gold text-2xl"></i>
+        </div>
+    </header>
+
+    <!-- TOOLS (Bottom Left/Right) -->
+    <div class="fixed bottom-6 left-6 z-50 flex flex-col items-start gap-3">
+        <button onclick="toggleDMTools()" class="glass w-14 h-14 flex items-center justify-center rounded-full hover:bg-pirate-gold/20 transition-colors border border-gray-600 group relative">
+            <i class="fa-solid fa-skull-crossbones text-gray-300 group-hover:text-pirate-gold transition-colors text-2xl"></i>
+        </button>
+        <div id="dm-panel" class="glass glass-panel p-6 hidden flex-col gap-4 w-72 transform transition-all origin-bottom-left shadow-[0_0_30px_rgba(0,0,0,0.8)]">
+            <div class="text-sm font-ui text-pirate-gold border-b border-pirate-gold/30 pb-2 mb-2 flex justify-between text-glow-gold">
+                <span>CAPTAIN'S TOOLS</span>
+            </div>
+            <button onclick="addXP(50)" class="btn-pirate text-sm py-2"><i class="fa-solid fa-plus mr-2"></i> 50 GOLD</button>
+            <button onclick="takeDamage(10)" class="btn-pirate text-sm py-2 border-red-800 text-red-300 hover:bg-red-900/60"><i class="fa-solid fa-fire mr-2"></i> CANNON FIRE -10</button>
+            <div id="dm-timer-display" class="font-ui text-center text-4xl text-glow-gold tracking-widest text-white mt-2">00:00</div>
+            <div class="flex justify-center gap-6 mt-2">
+                <button id="btn-timer-start" class="text-green-400 hover:text-white text-2xl"><i class="fa-solid fa-play"></i></button>
+                <button id="btn-timer-stop" class="text-red-500 hover:text-white text-2xl"><i class="fa-solid fa-stop"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 items-end">
+        <button onclick="toggleFullScreen()" class="glass w-12 h-12 flex items-center justify-center rounded-full hover:bg-pirate-gold/20 transition-colors border border-gray-600">
+            <i class="fa-solid fa-expand text-gray-300 text-lg"></i>
+        </button>
+        <button onclick="toggleWhiteboard()" class="glass w-16 h-16 flex items-center justify-center rounded-full hover:bg-pirate-gold/30 transition-colors border-2 border-pirate-gold shadow-[0_0_20px_rgba(212,175,55,0.5)]">
+            <i class="fa-solid fa-scroll text-pirate-parchment text-2xl"></i>
+        </button>
+    </div>
+    
+    <div id="whiteboard-panel" class="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl hidden flex-col p-12 transition-opacity pt-28">
+        <div class="flex justify-between items-center mb-6 max-w-6xl mx-auto w-full">
+            <h2 class="font-title text-5xl text-pirate-gold text-glow-gold"><i class="fa-solid fa-feather-pointed mr-4"></i> CAPTAIN'S LOG</h2>
+            <div class="flex gap-4">
+                <button onclick="clearWhiteboard()" class="text-gray-400 hover:text-pirate-red font-ui border border-gray-600 px-4 py-2 rounded hover:border-pirate-red transition-colors"><i class="fa-solid fa-eraser mr-2"></i> CLEAN</button>
+                <button onclick="toggleWhiteboard()" class="text-gray-400 hover:text-white text-4xl ml-4"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        </div>
+        <textarea id="wb-textarea" class="w-full max-w-6xl mx-auto flex-1 bg-pirate-parchment border-2 border-pirate-gold/80 rounded-sm p-8 font-body text-3xl text-pirate-wood focus:outline-none focus:border-pirate-darkgold resize-none shadow-[inset_0_0_50px_rgba(0,0,0,0.5)]" placeholder=">> Write vocabulary and notes here..."></textarea>
+    </div>
+
+    <!-- MAIN CONTENT AREA (30 PAGES) -->
+    <main id="main-content" class="w-full h-full relative">
+        
+        <!-- P1: TEACHER'S GUIDE (0) -->
+        <div class="page active" id="page-1">
+            <div class="page-content">
+                <div class="glass glass-panel max-w-4xl w-full p-12 relative border-t-4 border-pirate-gold">
+                    <h1 class="font-title text-6xl mb-8 text-pirate-gold text-center text-glow-gold">TEACHER'S LOG</h1>
+                    <div class="space-y-6 font-body text-xl text-gray-300 leading-relaxed">
+                        <p><strong class="text-white font-ui text-2xl text-pirate-gold">THEME:</strong> Assassin's Creed Black Flag Remake (Pirates, Ships, Video Games)</p>
+                        <p><strong class="text-white font-ui text-2xl text-pirate-gold">TARGET:</strong> B2 Upper-Intermediate - Passive of Reporting Verbs <i>(It is said that... / He is believed to be...)</i>.</p>
+                        <div class="bg-pirate-gold/10 border-l-4 border-pirate-gold p-6 rounded mt-8 font-body">
+                            <strong class="text-white font-ui tracking-widest block mb-4 uppercase">Instructions:</strong>
+                            <ul class="list-disc list-inside space-y-3 text-lg">
+                                <li>This is a B2 level lesson. The theme of gaming legends and leaks perfectly matches the <strong>Passive of Reporting Verbs</strong> ("It is said that the game will launch soon").</li>
+                                <li>The 8-minute video has been divided into two blocks of ~4 minutes to maintain engagement.</li>
+                                <li>HP represents the <strong>Hull Integrity</strong>. If they make grammar mistakes in the finale, the ship takes cannon damage!</li>
+                                <li>Use the "Parchment" button (bottom right) to note down vocabulary, and the "Captain's Tools" panel to award Gold Reales (XP) for good speaking.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- P2: COVER (1) -->
+        <div class="page" id="page-2">
+            <div class="absolute inset-0 bg-[url('https://flowgames.gg/wp-content/uploads/2026/04/Assassins-Creed-Black-Flag-Resynced.jpg')] bg-cover bg-center z-[-1]">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#140a05] via-[#140a05]/60 to-transparent"></div>
+            </div>
+            <div class="page-content h-full justify-end pb-24">
+                <div class="text-center">
+                    <div class="text-pirate-gold tracking-[1em] text-2xl mb-8 font-ui animate-pulse text-glow-gold font-bold">1715 • THE CARIBBEAN</div>
+                    <h1 class="font-title text-7xl md:text-[9rem] text-white text-glow-gold mb-2 leading-none">BLACK FLAG</h1>
+                    <h1 class="font-ui text-3xl md:text-[3rem] text-gray-300 mb-12 tracking-widest uppercase">The Remake Rumors</h1>
+                    <div class="flex justify-center gap-6">
+                        <span class="glass px-8 py-3 rounded-sm text-lg font-ui text-white border border-pirate-gold shadow-[0_0_15px_rgba(212,175,55,0.5)] bg-pirate-gold/20">LEVEL: B2</span>
+                        <span class="glass px-8 py-3 rounded-sm text-lg font-ui text-gray-300 border border-gray-500 shadow-[0_0_15px_rgba(255,255,255,0.1)]">PASSIVE OF REPORTING VERBS</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- P3: CLASS SELECTION (2) -->
+        <div class="page" id="page-3">
+            <div class="page-content">
+                <h2 class="font-title text-6xl mb-6 text-center text-glow-gold w-full text-pirate-gold">ASSEMBLE YOUR CREW</h2>
+                <p class="font-body text-2xl text-gray-400 mb-10 text-center">Every pirate ship needs a strong crew. What is your role on the Jackdaw?</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl w-full">
+                    <div class="glass glass-panel p-8 text-center cursor-pointer hover:bg-pirate-gold/20 transition-all border-2 border-transparent hover:border-pirate-gold group" onclick="selectClass('QUARTERMASTER', '#d4af37')">
+                        <i class="fa-solid fa-scroll text-6xl mb-4 text-gray-500 group-hover:text-pirate-gold transition-colors"></i>
+                        <h3 class="font-ui text-3xl text-white mb-2 font-bold">QUARTERMASTER</h3>
+                        <p class="font-body text-gray-400">Logic, Leadership, and Rules.</p>
+                    </div>
+                    <div class="glass glass-panel p-8 text-center cursor-pointer hover:bg-pirate-red/30 transition-all border-2 border-transparent hover:border-pirate-red group" onclick="selectClass('MASTER GUNNER', '#880000')">
+                        <i class="fa-solid fa-bomb text-6xl mb-4 text-gray-500 group-hover:text-pirate-red transition-colors"></i>
+                        <h3 class="font-ui text-3xl text-white mb-2 font-bold">MASTER GUNNER</h3>
+                        <p class="font-body text-gray-400">Combat, Cannons, and Brute Force.</p>
+                    </div>
+                    <div class="glass glass-panel p-8 text-center cursor-pointer hover:bg-cyan-900/30 transition-all border-2 border-transparent hover:border-cyan-600 group" onclick="selectClass('NAVIGATOR', '#0891b2')">
+                        <i class="fa-regular fa-compass text-6xl mb-4 text-gray-500 group-hover:text-cyan-500 transition-colors"></i>
+                        <h3 class="font-ui text-3xl text-white mb-2 font-bold">NAVIGATOR</h3>
+                        <p class="font-body text-gray-400">Stealth, Strategy, and the Sea.</p>
+                    </div>
+                </div>
+
+                <div id="name-input-section" class="mt-12 hidden flex-col items-center glass p-8 rounded-sm w-full max-w-2xl border border-pirate-gold/50 shadow-[0_0_30px_rgba(212,175,55,0.3)]">
+                    <label class="font-ui text-white mb-4 text-xl tracking-widest">ENTER YOUR PIRATE NAME:</label>
+                    <div class="flex gap-4 w-full">
+                        <input type="text" id="player-name-input" class="flex-1 bg-black/60 border-2 border-gray-600 rounded-sm text-white px-6 py-4 font-ui text-2xl focus:outline-none focus:border-pirate-gold" placeholder="Captain...">
+                        <button onclick="confirmAgent()" class="btn-pirate text-xl px-8">SET SAIL</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- P4: WARM UP 1 (3) -->
+        <div class="page" id="page-4">
+            <div class="page-content max-w-4xl">
+                <div class="text-pirate-gold font-ui tracking-[0.3em] mb-6 text-sm bg-pirate-gold/10 px-6 py-2 rounded-full border border-pirate-gold/30 inline-block text-center text-glow-gold">TAVERN TALK I</div>
+                <div class="qa-block glass w-full p-12 cursor-pointer rounded-sm relative border border-gray-700 hover:border-pirate-gold transition-colors" onclick="if(!this.classList.contains('revealed')){ addXP(10); this.classList.add('revealed');} else {this.classList.remove('revealed');}">
+                    <h2 class="font-body text-5xl text-center leading-relaxed">When you think of a <span class="text-pirate-gold font-bold">Pirate Story</span>, what elements are absolutely necessary?</h2>
+                    <div class="reveal-hint text-center mt-8 text-gray-400 font-ui tracking-[0.2em] text-sm animate-pulse"><i class="fa-solid fa-hand-pointer mr-2"></i>CLICK FOR INSIGHT</div>
+                    <div class="answer-box font-body text-3xl text-center">
+                        <div class="text-white mb-6 border-b border-gray-700 pb-4">Target Vocab: Treasure maps, Parrots, Wooden legs, Cannons, Betrayal.</div>
+                        <div class="text-gray-300 bg-gray-900/50 p-4 rounded text-2xl">
+                            <span class="font-ui text-pirate-gold">Teacher:</span> "What is your favorite pirate movie or game?"
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- P5: WARM UP 2 (4) -->
+        <div class="page" id="page-5">
+            <div class="page-content max-w-5xl">
+                <div class="text-pirate-gold font-ui tracking-[0.3em] mb-6 text-sm bg-pirate-gold/10 px-6 py-2 rounded-full border border-pirate-gold/30 inline-block text-center text-glow-gold">TAVERN TALK II</div>
+                <div class="qa-block glass w-full p-12 cursor-pointer rounded-sm relative border border-gray-700 hover:border-pirate-gold transition-colors" onclick="if(!this.classList.contains('revealed')){ addXP(10); this.classList.add('revealed');} else {this.classList.remove('revealed');}">
+                    <h2 class="font-body text-4xl text-center leading-relaxed mb-8">What do you think about <span class="text-pirate-gold font-bold">Video Game Remakes</span>? Are they a good idea or a lazy cash grab?</h2>
+                    <div class="flex flex-wrap justify-center gap-4 mb-6 w-full">
+                        <div class="bg-black/50 border border-gray-600 px-6 py-3 text-2xl font-body text-gray-300 rounded-sm">Nostalgia</div>
+                        <div class="bg-black/50 border border-gray-600 px-6 py-3 text-2xl font-body text-gray-300 rounded-sm">Modern Graphics</div>
+                        <div class="bg-black/50 border border-gray-600 px-6 py-3 text-2xl font-body text-gray-300 rounded-sm">Lack of originality</div>
+                    </div>
+                    <div class="reveal-hint text-center mt-4 text-gray-400 font-ui tracking-[0.2em] text-sm animate-pulse"><i class="fa-solid fa-hand-pointer mr-2"></i>CLICK FOR INSIGHT</div>
+                    <div class="answer-box font-body text-3xl text-center">
+                        <div class="text-white mb-6 border-b border-gray-700 pb-4">Discuss the balance between updating old mechanics and ruining memories.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- P6: VOCAB MAP (5) -->
+        <div class="page" id="page-6">
+            <div class="page-content w-full max-w-6xl">
+                <div class="flex justify-between items-end mb-6 w-full px-4">
+                    <h2 class="font-title text-6xl text-glow-gold text-pirate-gold">THE JACKDAW</h2>
+                    <div class="flex gap-4">
+                        <div id="status-vocab1" class="glass px-4 py-2 rounded-sm font-ui text-gray-500 border border-gray-600 transition-all duration-500"><i class="fa-solid fa-lock mr-2"></i>TREACHEROUS</div>
+                        <div id="status-vocab2" class="glass px-4 py-2 rounded-sm font-ui text-gray-500 border border-gray-600 transition-all duration-500"><i class="fa-solid fa-lock mr-2"></i>PLUNDER</div>
+                        <div id="status-vocab3" class="glass px-4 py-2 rounded-sm font-ui text-gray-500 border border-gray-600 transition-all duration-500"><i class="fa-solid fa-lock mr-2"></i>OVERHAUL</div>
+                    </div>
+                </div>
+
+                <div class="relative w-full aspect-[21/9] glass rounded-sm overflow-hidden border-2 border-pirate-gold/50 shadow-[0_0_50px_rgba(212,175,55,0.2)] group">
+                    <img src="https://cdn2.unrealengine.com/assassin-s-creed-black-flag-resynced-sets-sail-in-july-with-huge-modern-upgrades-3840x2160-1416c91057d9.jpeg" class="absolute inset-0 w-full h-full object-cover opacity-70 mix-blend-luminosity z-10 sepia-[.4]">
+                    <div class="absolute inset-0 bg-[#140a05]/40 z-10 pointer-events-none"></div>
+                    
+                    <div class="absolute top-[65%] left-[20%] cursor-pointer transform -translate-x-1/2 -translate-y-1/2 z-20 hover:scale-110 transition-transform" onclick="revealVocabAdvanced('vocab1', this)">
+                        <div class="relative flex items-center justify-center">
+                            <div class="w-12 h-12 border-2 border-dotted border-white rounded-full animate-[spin_6s_linear_infinite_reverse]"></div>
+                            <div class="absolute w-4 h-4 bg-white rounded-full shadow-[0_0_20px_#ffffff] animate-pulse"></div>
+                            <div class="absolute -top-10 bg-black/90 text-white font-ui px-3 py-1 rounded border border-white text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">INSPECT WAVES</div>
+                        </div>
+                    </div>
+
+                    <div class="absolute top-[40%] left-[50%] cursor-pointer transform -translate-x-1/2 -translate-y-1/2 z-20 hover:scale-110 transition-transform" onclick="revealVocabAdvanced('vocab2', this)">
+                        <div class="relative flex items-center justify-center">
+                            <div class="w-12 h-12 border-2 border-dotted border-pirate-gold rounded-full animate-[spin_6s_linear_infinite_reverse]"></div>
+                            <div class="absolute w-4 h-4 bg-pirate-gold rounded-full shadow-[0_0_20px_#d4af37] animate-pulse"></div>
+                            <div class="absolute -top-10 bg-black/90 text-pirate-gold font-ui px-3 py-1 rounded border border-pirate-gold text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">INSPECT DECK</div>
+                        </div>
+                    </div>
+
+                    <div class="absolute top-[25%] right-[20%] cursor-pointer transform -translate-x-1/2 -translate-y-1/2 z-20 hover:scale-110 transition-transform" onclick="revealVocabAdvanced('vocab3', this)">
+                        <div class="relative flex items-center justify-center">
+                            <div class="w-12 h-12 border-2 border-dotted border-white rounded-full animate-[spin_6s_linear_infinite_reverse]"></div>
+                            <div class="absolute w-4 h-4 bg-white rounded-full shadow-[0_0_20px_#ffffff] animate-pulse"></div>
+                            <div class="absolute -top-10 bg-black/90 text-white font-ui px-3 py-1 rounded border border-white text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">INSPECT SAILS</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modals -->
+                <div id="vocab1" class="hidden absolute glass glass-panel p-10 z-30 w-[450px] text-center border-t-4 border-white top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/95 shadow-[0_0_50px_rgba(255,255,255,0.2)]">
+                    <i class="fa-solid fa-water text-7xl mb-6 text-white text-glow-white"></i>
+                    <h3 class="font-title text-5xl mb-4 text-white">TREACHEROUS</h3>
+                    <p class="font-body text-gray-300 text-xl italic">Extremely dangerous, especially because of bad weather conditions or hidden dangers.</p>
+                    <button class="mt-8 btn-pirate text-lg w-full bg-transparent border-white" onclick="this.parentElement.classList.add('hidden')">UNDERSTOOD</button>
+                </div>
+                <div id="vocab2" class="hidden absolute glass glass-panel p-10 z-30 w-[450px] text-center border-t-4 border-pirate-gold top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/95 shadow-[0_0_50px_rgba(212,175,55,0.5)]">
+                    <i class="fa-solid fa-coins text-7xl mb-6 text-pirate-gold text-glow-gold"></i>
+                    <h3 class="font-title text-5xl mb-4 text-pirate-gold text-glow-gold">TO PLUNDER</h3>
+                    <p class="font-body text-gray-300 text-xl italic">To steal goods forcefully from a place, especially during a war or by pirates.</p>
+                    <button class="mt-8 btn-pirate text-lg w-full" onclick="this.parentElement.classList.add('hidden')">UNDERSTOOD</button>
+                </div>
+                <div id="vocab3" class="hidden absolute glass glass-panel p-10 z-30 w-[450px] text-center border-t-4 border-white top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/95 shadow-[0_0_50px_rgba(255,255,255,0.2)]">
+                    <i class="fa-solid fa-hammer text-7xl mb-6 text-white text-glow-white"></i>
+                    <h3 class="font-title text-5xl mb-4 text-white">OVERHAUL</h3>
+                    <p class="font-body text-gray-300 text-xl italic">A complete examination and repair (or remake) of a system or game to improve it.</p>
+                    <button class="mt-8 btn-pirate text-lg w-full bg-transparent border-white" onclick="this.parentElement.classList.add('hidden')">UNDERSTOOD</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- P7: GRAMMAR INTRODUCTION (7) -->
+        <div class="page" id="page-7">
+            <div class="page-content max-w-6xl w-full">
+                <h2 class="font-title text-6xl mb-10 text-center w-full text-glow-gold text-pirate-gold">RUMORS & LEGENDS</h2>
+                <div class="flex flex-col md:flex-row gap-8 w-full">
+                    <div class="w-full md:w-1/2 glass glass-panel p-10 flex flex-col font-body text-2xl leading-[1.9] text-gray-200 justify-center">
+                        <p class="mb-6">In the world of pirates and leaked video games, we rarely know the exact truth. We use the <span class="text-pirate-gold font-bold">Passive Voice with Reporting Verbs</span> to distance ourselves from the information.</p>
+                        <div class="bg-pirate-gold/10 border-l-8 border-pirate-gold p-6 text-center text-3xl font-bold font-ui">
+                            It is <span class="text-pirate-gold">said / believed / thought</span> that...
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/2 flex flex-col gap-6">
+                        <div class="glass glass-panel p-6 flex flex-col gap-4">
+                            <div class="text-xl font-body text-gray-400">Active: People say that Black Flag is the best game.</div>
+                            <div class="text-2xl font-body text-white"><i class="fa-solid fa-arrow-turn-down fa-rotate-90 mr-2 text-pirate-gold"></i><span class="text-pirate-gold font-bold">It is said that</span> Black Flag is the best game.</div>
+                        </div>
+                        <div class="glass glass-panel p-6 flex flex-col gap-4">
+                            <div class="text-xl font-body text-gray-400">Active: Journalists report that a remake is coming.</div>
+                            <div class="text-2xl font-body text-white"><i class="fa-solid fa-arrow-turn-down fa-rotate-90 mr-2 text-pirate-gold"></i><span class="text-pirate-gold font-bold">It is reported that</span> a remake is coming.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- P8: GRAMMAR SANDBOX 1 (8) -->
+        <div class="page" id="page-8">
+            <div class="page-content">
+                <h2 class="font-title text-6xl text-white text-glow-white mb-4">THEORY OF RUMORS</h2>
+                <p class="font-ui text-xl text-gray-400 mb-10 uppercase tracking-widest bg-gray-800 px-6 py-2 rounded-sm border border-gray-600">Structure 1: Impersonal Subject (It)</p>
+                <div class="glass glass-panel p-16 w-full max-w-5xl text-center border-t-4 border-white shadow-[0_0_50px_rgba(255,255,255,0.1)]">
+                    <p class="font-body text-2xl text-gray-300 mb-10 border-b border-gray-700 pb-8">Click the words to change the rumor.</p>
+                    <div class="flex flex-wrap justify-center gap-6 text-4xl font-body items-center italic">
+                        <div class="text-gray-400">It</div>
+                        <div class="text-gray-400">is</div>
+                        <div class="sandbox-slot glass px-10 py-8 rounded-sm font-bold border border-white text-white bg-white/10 cursor-pointer hover:bg-white/20" onclick="cycleWord(this, ['said', 'believed', 'thought', 'reported', 'rumored'])">said</div>
+                        <div class="text-gray-400">that</div>
+                        <div class="sandbox-slot glass px-10 py-8 rounded-sm cursor-pointer hover:bg-pirate-gold/20 border border-pirate-gold text-pirate-gold font-bold" onclick="cycleWord(this, ['the remake is in development.', 'Edward Kenway was real.', 'the treasure is cursed.'])">the remake is in development.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- P9: GRAMMAR SANDBOX 2 (9) -->
+        <div class="page" id="page-9">
+            <div class="page-content">
+                <h2 class="font-title text-6xl text-pirate-gold text-glow-gold mb-4">ADVANCED THEORY</h2>
+                <p class="font-ui text-xl text-gray-400 mb-10 uppercase tracking-widest bg-pirate-gold/20 px-6 py-2 rounded-sm border border-pirate-gold">Structure 2: Personal Subject + To Be/To Have</p>
+                <div class="glass glass-panel p-16 w-full max-w-5xl text-center border-t-4 border-pirate-gold shadow-[0_0_50px_rgba(212,175,55,0.1)]">
+                    <p class="font-body text-xl text-gray-300 mb-10 border-b border-gray-700 pb-8">You can start the sentence with the subject itself. <br>Use <span class="text-pirate-gold font-bold">to be</span> for present facts, and <span class="text-pirate-gold font-bold">to have + participle</span> for past actions.</p>
+                    <div class="flex flex-wrap justify-center gap-4 text-4xl font-body items-center italic">
+                        <div class="sandbox-slot glass px-8 py-6 rounded-sm font-bold border border-gray-500 text-white cursor-pointer hover:bg-white/10" onclick="cycleWord(this, ['The remake', 'Blackbeard'])">The remake</div>
+                        <div class="text-gray-400">is</div>
+                        <div class="sandbox-slot glass px-8 py-6 rounded-sm font-bold border border-gray-500 text-gray-300 cursor-pointer hover:bg-white/10" onclick="cycleWord(this, ['expected', 'rumored', 'known'])">expected</div>
+                        <div class="sandbox-slot glass px-8 py-6 rounded-sm border border-pirate-gold text-pirate-gold font-bold bg-pirate-gold/10 cursor-pointer hover:bg-pirate-gold/20" onclick="cycleWord(this, ['to be delayed until 2026.', 'to have stolen 100 ships.'])">to be delayed until 2026.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- P10: VIDEO 1 (10) -->
+        <div class="page" id="page-10">
+            <div class="page-content max-w-6xl w-full">
+                <div class="text-center w-full">
+                    <div class="flex items-center justify-center text-white animate-pulse mb-8 font-ui text-2xl tracking-[0.3em]">
+                        <i class="fa-solid fa-eye mr-4 text-pirate-gold"></i> WATCH: PART 1 (0:00 - 4:00)
+                    </div>
+                    <div class="glass p-3 rounded-sm relative w-full pt-[56.25%] border-2 border-gray-800 bg-black shadow-[0_0_50px_rgba(0,0,0,0.9)]">
+                        <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/c-KfuCccYdk?start=0&end=240" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- P11: Q&A 1 (11) -->
+        <div class="page" id="page-11">
+            <div class="page-content w-full max-w-5xl">
+                <h2 class="font-title text-6xl mb-12 text-glow-gold text-pirate-gold text-center">INTEL ANALYSIS I</h2>
+                <div class="space-y-6 w-full">
+                    <div class="qa-block glass p-10 cursor-pointer border border-gray-700 rounded-sm hover:border-pirate-gold transition-colors" onclick="if(!this.classList.contains('revealed')){ addXP(15); this.classList.add('revealed');} else {this.classList.remove('revealed');}">
+                        <div class="font-body text-3xl flex justify-between items-center leading-relaxed">According to the video, when <span class="font-bold text-pirate-gold italic mx-2">is the remake expected to</span> be released? <i class="fa-solid fa-chevron-down text-gray-600 text-2xl mt-1"></i></div>
+                        <div class="reveal-hint text-center mt-6 text-gray-400 font-ui tracking-[0.2em] text-sm animate-pulse"><i class="fa-solid fa-hand-pointer mr-2"></i>CLICK FOR ANSWER</div>
+                        <div class="answer-box font-body text-2xl text-white">
+                            It is expected to be released around <span class="text-pirate-gold font-bold">November 2025</span>.
+                            <div class="mt-6 p-4 bg-gray-800/50 border-l-4 border-gray-500 text-gray-300 text-xl">Follow-up: Do you think delays in games are good (for quality) or just frustrating?</div>
+                        </div>
+                    </div>
+                    
+                    <div class="qa-block glass p-10 cursor-pointer border border-gray-700 rounded-sm hover:border-pirate-gold transition-colors" onclick="if(!this.classList.contains('revealed')){ addXP(15); this.classList.add('revealed');} else {this.classList.remove('revealed');}">
+                        <div class="font-body text-3xl flex justify-between items-center leading-relaxed">What engine <span class="font-bold text-pirate-gold italic mx-2">is it rumored to</span> use? <i class="fa-solid fa-chevron-down text-gray-600 text-2xl mt-1"></i></div>
+                        <div class="reveal-hint text-center mt-6 text-gray-400 font-ui tracking-[0.2em] text-sm animate-pulse"><i class="fa-solid fa-hand-pointer mr-2"></i>CLICK FOR ANSWER</div>
+                        <div class="answer-box font-body text-2xl text-white">
+                            It is rumored to use an upgraded version of the <span class="text-pirate-gold font-bold">Anvil engine</span>.
+                            <div class="mt-6 p-4 bg-gray-800/50 border-l-4 border-gray-500 text-gray-300 text-xl">Follow-up: Does graphics matter more than gameplay for you?</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- P12: SPEAKING ARENA 1 (12) -->
+        <div class="page" id="page-12">
+            <div class="page-content max-w-4xl">
+                <div class="text-pirate-gold font-ui tracking-[0.3em] mb-6 text-sm bg-pirate-gold/10 px-6 py-2 rounded-full border border-pirate-gold/30 inline-block text-center text-glow-gold">TAVERN DEBATE</div>
+                <div class="qa-block glass w-full p-12 cursor-pointer rounded-sm relative border border-gray-700 hover:border-pirate-gold transition-colors" onclick="if(!this.classList.contains('revealed')){ addXP(10); this.classList.add('revealed');} else {this.classList.remove('revealed');}">
+                    <h2 class="font-body text-4xl leading-relaxed text-center italic">"Pirates were essentially the first rebels against corrupt corporations and governments."</h2>
+                    <div class="flex justify-center gap-6 mt-8">
+                        <span class="text-2xl font-ui text-green-500">I agree</span>
+                        <span class="text-2xl font-ui text-gray-500">vs</span>
+                        <span class="text-2xl font-ui text-red-500">I disagree</span>
+                    </div>
+                    <div class="reveal-hint text-center mt-8 text-gray-400 font-ui tracking-[0.2em] text-sm animate-pulse"><i class="fa-solid fa-hand-pointer mr-2"></i>CLICK FOR INSIGHT</div>
+                    <div class="answer-box font-body text-2xl text-center">
+                        <div class="text-white mb-6 border-b border-gray-700 pb-4">Discuss the romanticization of pirates in media versus historical reality.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- P13: VIDEO 2 (13) -->
+        <div class="page" id="page-13">
+            <div class="page-content max-w-6xl w-full">
+                <div class="text-center w-full">
+                    <div class="flex items-center justify-center text-white animate-pulse mb-8 font-ui text-2xl tracking-[0.3em]">
+                        <i class="fa-solid fa-eye mr-4 text-pirate-gold"></i> WATCH: PART 2 (4:00 - End)
+                    </div>
+                    <div class="glass p-3 rounded-sm relative w-full pt-[56.25%] border-2 border-gray-800 bg-black shadow-[0_0_50px_rgba(0,0,0,0.9)]">
+                        <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/c-KfuCccYdk?start=240" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- P14: Q&A 2 (14) -->
+        <div class="page" id="page-14">
+            <div class="page-content w-full max-w-5xl">
+                <h2 class="font-title text-6xl mb-12 text-glow-gold text-pirate-gold text-center">INTEL ANALYSIS II</h2>
+                <div class="space-y-6 w-full">
+                    <div class="qa-block glass p-10 cursor-pointer border border-gray-700 rounded-sm hover:border-pirate-gold transition-colors" onclick="if(!this.classList.contains('revealed')){ addXP(15); this.classList.add('revealed');} else {this.classList.remove('revealed');}">
+                        <div class="font-body text-3xl flex justify-between items-center leading-relaxed">According to the video, what <span class="font-bold text-pirate-gold italic mx-2">is expected to</span> change in the game's mechanics? <i class="fa-solid fa-chevron-down text-gray-600 text-2xl mt-1"></i></div>
+                        <div class="reveal-hint text-center mt-6 text-gray-400 font-ui tracking-[0.2em] text-sm animate-pulse"><i class="fa-solid fa-hand-pointer mr-2"></i>CLICK FOR ANSWER</div>
+                        <div class="answer-box font-body text-2xl text-white">
+                            It is expected to feature a heavy <span class="text-pirate-gold font-bold">overhaul</span> of stealth, parkour, and combat to match modern titles.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- P15: TRIAL 1 (MATCHING) (15) -->
+        <div class="page" id="page-15">
+            <div class="page-content w-full">
+                <h2 class="font-title text-6xl text-white text-glow-white mb-10 text-center">TRIAL 1: MATCH THE RUMOR</h2>
+                <div class="flex flex-col md:flex-row gap-10 w-full max-w-6xl justify-center" id="matching-game">
+                    <div class="flex flex-col gap-6 w-full md:w-1/2" id="match-col-a">
+                        <button class="glass p-8 text-center font-body text-2xl match-btn rounded-sm border-2 border-transparent transition-all shadow-md" data-match="1">Active: People think Black Flag is a masterpiece.</button>
+                        <button class="glass p-8 text-center font-body text-2xl match-btn rounded-xl border-2 border-transparent transition-all shadow-md" data-match="2">Active: They say Ubisoft delayed the game.</button>
+                        <button class="glass p-8 text-center font-body text-2xl match-btn rounded-xl border-2 border-transparent transition-all shadow-md" data-match="3">Active: Fans expect new naval combat.</button>
+                    </div>
+                    <div class="flex flex-col gap-6 w-full md:w-1/2" id="match-col-b">
+                        <button class="glass p-8 text-center font-body text-2xl match-btn rounded-xl border-2 border-transparent transition-all shadow-md" data-match="3">Passive: New naval combat is expected by fans.</button>
+                        <button class="glass p-8 text-center font-body text-2xl match-btn rounded-xl border-2 border-transparent transition-all shadow-md" data-match="1">Passive: It is thought that Black Flag is a masterpiece.</button>
+                        <button class="glass p-8 text-center font-body text-2xl match-btn rounded-xl border-2 border-transparent transition-all shadow-md" data-match="2">Passive: It is said that Ubisoft delayed the game.</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- P16: TRIAL 2 (MCQ) (16) -->
+        <div class="page" id="page-16">
+            <div class="page-content">
+                <div class="text-center mb-12 w-full">
+                    <h2 class="font-title text-6xl text-white text-glow-white mb-6">TRIAL 2: THE PASSIVE</h2>
+                    <p class="font-body text-2xl text-gray-400">Complete the sentence.</p>
+                </div>
+                <div class="glass glass-panel p-16 w-full max-w-5xl text-center border border-gray-700 shadow-[0_0_40px_rgba(255,255,255,0.1)]">
+                    <h3 class="font-body text-4xl mb-16 leading-relaxed italic">"It is <span class="inline-block w-40 border-b-4 border-pirate-gold mx-3 relative top-2"></span> that Edward Kenway was the most feared pirate."</h3>
+                    <div class="flex justify-center gap-8 flex-wrap">
+                        <button class="btn-pirate text-3xl py-5 px-12" onclick="checkExercise(this, false, 'MCQ')">believe</button>
+                        <button class="btn-pirate text-3xl py-5 px-12" onclick="checkExercise(this, true, 'MCQ')">believed</button>
+                        <button class="btn-pirate text-3xl py-5 px-12" onclick="checkExercise(this, false, 'MCQ')">believing</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- P17: TRIAL 3 (MCQ) (17) -->
+        <div class="page" id="page-17">
+            <div class="page-content">
+                <div class="text-center mb-12 w-full">
+                    <h2 class="font-title text-6xl text-white text-glow-white mb-6">TRIAL 3: ADVANCED PASSIVE</h2>
+                    <p class="font-body text-2xl text-gray-400">Refer to a PAST action using the personal subject.</p>
+                </div>
+                <div class="glass glass-panel p-16 w-full max-w-5xl text-center border border-gray-700 shadow-[0_0_40px_rgba(255,255,255,0.1)]">
+                    <h3 class="font-body text-4xl mb-16 leading-relaxed italic">"The game is rumored <span class="inline-block w-64 border-b-4 border-pirate-gold mx-3 relative top-2"></span> development in 2021."</h3>
+                    <div class="flex justify-center gap-8 flex-wrap">
+                        <button class="btn-pirate text-2xl py-5 px-10" onclick="checkExercise(this, false, 'MCQ')">to start</button>
+                        <button class="btn-pirate text-2xl py-5 px-10" onclick="checkExercise(this, false, 'MCQ')">to be started</button>
+                        <button class="btn-pirate text-2xl py-5 px-10" onclick="checkExercise(this, true, 'MCQ')">to have started</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- P18: TRIAL 4 (SENTENCE BUILDER) (18) -->
+        <div class="page" id="page-18">
+            <div class="page-content">
+                <div class="text-center mb-12 w-full">
+                    <h2 class="font-title text-6xl text-white text-glow-white mb-6">TRIAL 4: SYNTAX MAP</h2>
+                    <p class="font-body text-2xl text-gray-400">Put the words in order to form the rumor.</p>
+                </div>
+                <div class="w-full max-w-6xl flex flex-col items-center">
+                    <div id="sb1-answer" class="w-full min-h-[140px] glass mb-12 flex flex-wrap items-center justify-center gap-4 p-8 border-4 border-dashed border-gray-600 rounded-sm bg-black/80"></div>
+                    <div id="sb1-bank" class="flex flex-wrap justify-center gap-5">
+                        <button class="glass px-10 py-5 font-body text-3xl hover:bg-white/20 transition-colors builder-word rounded-sm shadow-lg border border-gray-600">to be</button>
+                        <button class="glass px-10 py-5 font-body text-3xl hover:bg-white/20 transition-colors builder-word rounded-sm shadow-lg border border-gray-600">is</button>
+                        <button class="glass px-10 py-5 font-body text-3xl hover:bg-white/20 transition-colors builder-word rounded-sm shadow-lg border border-gray-600">The graphics</button>
+                        <button class="glass px-10 py-5 font-body text-3xl hover:bg-white/20 transition-colors builder-word rounded-sm shadow-lg border border-gray-600">are</button>
+                        <button class="glass px-10 py-5 font-body text-3xl hover:bg-white/20 transition-colors builder-word rounded-sm shadow-lg border border-gray-600">expected</button>
+                        <button class="glass px-10 py-5 font-body text-3xl hover:bg-white/20 transition-colors builder-word rounded-sm shadow-lg border border-gray-600">overhauled.</button>
+                    </div>
+                    <div class="mt-16 flex gap-8">
+                        <button onclick="resetBuilder('sb1')" class="text-gray-400 hover:text-white font-ui text-xl border border-gray-600 px-6 py-3 rounded hover:border-white transition-all tracking-widest"><i class="fa-solid fa-rotate-left mr-3"></i>RESET</button>
+                        <button onclick="checkBuilder('sb1', ['The graphics', 'are', 'expected', 'to be', 'overhauled.'])" class="btn-pirate hidden text-xl px-10 py-3 tracking-widest" id="sb1-check">CHECK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- P19: TRIAL 5 (ERROR PURGE) (19) -->
+        <div class="page" id="page-19">
+            <div class="page-content">
+                <div class="text-center mb-12 w-full">
+                    <h2 class="font-title text-6xl text-pirate-red text-glow-red mb-6">TRIAL 5: FIX THE SCROLL</h2>
+                    <p class="font-body text-2xl text-gray-400">Click the <span class="text-pirate-red font-bold">red errors</span> to fix them.</p>
+                </div>
+                <div class="glass glass-panel p-16 w-full max-w-5xl font-body text-4xl leading-[2.5] text-center border-2 border-pirate-red/50 shadow-[inset_0_0_50px_rgba(136,0,0,0.1)] bg-black/80">
+                    <span class="text-pirate-red font-bold cursor-pointer border-b-4 border-pirate-red hover:bg-pirate-red/20 transition-colors anomaly px-3 rounded" onclick="fixAnomaly(this, 'It is')">They are</span> rumored that the map will be 30% larger. The developers are known <span class="text-pirate-red font-bold cursor-pointer border-b-4 border-pirate-red hover:bg-pirate-red/20 transition-colors anomaly px-3 rounded" onclick="fixAnomaly(this, 'to be')">be</span> working hard. Edward Kenway is believed <span class="text-pirate-red font-bold cursor-pointer border-b-4 border-pirate-red hover:bg-pirate-red/20 transition-colors anomaly px-3 rounded" onclick="fixAnomaly(this, 'to have been')">to be</span> the most charismatic assassin in the series' history.
+                </div>
+            </div>
+        </div>
+
+        <!-- P20: ETHICAL SPECTRUM 1 (20) -->
+        <div class="page" id="page-20">
+            <div class="page-content">
+                <h2 class="font-title text-6xl mb-16 text-center text-glow-white w-full tracking-widest">PIRATE CODE</h2>
+                <div class="glass p-16 w-full max-w-6xl text-center rounded-sm border border-gray-600 shadow-2xl bg-black/90">
+                    <h3 class="font-body text-4xl mb-24 leading-relaxed italic">"It is completely fine to illegally download (pirate) video games if they are made by giant, billionaire corporations."</h3>
+                    <div class="flex justify-between items-center relative px-8 md:px-20 w-full">
+                        <div class="absolute top-1/2 left-20 right-20 h-3 bg-gradient-to-r from-green-600 via-gray-600 to-red-600 transform -translate-y-1/2 z-0 rounded-full"></div>
+                        <button class="z-10 bg-black/90 px-8 py-5 rounded-sm border-4 border-green-600 hover:bg-green-900/50 transition-all text-2xl font-ui font-bold hover:scale-110 shadow-[0_0_20px_rgba(22,163,74,0.5)]">AGREE</button>
+                        <button class="z-10 bg-black/90 px-8 py-5 rounded-sm border-4 border-gray-500 hover:bg-gray-700/50 transition-all text-2xl font-ui hover:scale-110">NEUTRAL</button>
+                        <button class="z-10 bg-black/90 px-8 py-5 rounded-sm border-4 border-red-600 hover:bg-red-900/50 transition-all text-2xl font-ui font-bold hover:scale-110 shadow-[0_0_20px_rgba(220,38,38,0.5)]">DISAGREE</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- P21: ETHICAL SPECTRUM 2 (21) -->
+        <div class="page" id="page-21">
+            <div class="page-content">
+                <h2 class="font-title text-6xl mb-16 text-center text-glow-white w-full tracking-widest">PIRATE CODE</h2>
+                <div class="glass p-16 w-full max-w-6xl text-center rounded-sm border border-gray-600 shadow-2xl bg-black/90">
+                    <h3 class="font-body text-4xl mb-24 leading-relaxed italic">"Remakes ruin the original vision of the creators. Games should be preserved, not altered."</h3>
+                    <div class="flex justify-between items-center relative px-8 md:px-20 w-full">
+                        <div class="absolute top-1/2 left-20 right-20 h-3 bg-gradient-to-r from-green-600 via-gray-600 to-red-600 transform -translate-y-1/2 z-0 rounded-full"></div>
+                        <button class="z-10 bg-black/90 px-8 py-5 rounded-sm border-4 border-green-600 hover:bg-green-900/50 transition-all text-2xl font-ui font-bold hover:scale-110 shadow-[0_0_20px_rgba(22,163,74,0.5)]">AGREE</button>
+                        <button class="z-10 bg-black/90 px-8 py-5 rounded-sm border-4 border-gray-500 hover:bg-gray-700/50 transition-all text-2xl font-ui hover:scale-110">NEUTRAL</button>
+                        <button class="z-10 bg-black/90 px-8 py-5 rounded-sm border-4 border-red-600 hover:bg-red-900/50 transition-all text-2xl font-ui font-bold hover:scale-110 shadow-[0_0_20px_rgba(220,38,38,0.5)]">DISAGREE</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- P22: RPG INTRO (22) -->
+        <div class="page" id="page-22">
+            <div class="page-content text-center w-full max-w-5xl">
+                <i class="fa-solid fa-anchor text-9xl text-pirate-gold mb-10 animate-pulse text-glow-gold"></i>
+                <h1 class="font-title text-[6rem] text-white mb-8 tracking-widest">MAN THE CANNONS</h1>
+                <p class="font-body text-3xl text-gray-300 mb-16 leading-relaxed">A Spanish Galleon is approaching fast. Use your grammar knowledge to command the crew and survive the naval battle!</p>
+                <button onclick="nextPage()" class="btn-pirate text-3xl px-16 py-8 shadow-[0_0_30px_rgba(212,175,55,0.4)]">RAISE THE SAILS</button>
+            </div>
+        </div>
+
+        <!-- P23: CLASS SKILL CHECK (23) -->
+        <div class="page" id="page-23">
+            <div class="page-content">
+                <h2 class="font-title text-6xl text-pirate-gold text-glow-gold mb-8 text-center">CREW ROLE ACTIVATED</h2>
+                <div id="class-challenge-area" class="w-full max-w-6xl glass p-12 rounded-sm border-2 border-pirate-gold shadow-[0_0_40px_rgba(212,175,55,0.2)]">
+                    <!-- Renders via JS based on Class -->
+                </div>
+            </div>
+        </div>
+
+        <!-- P24: RPG CLIMAX (ATTACK) (24) -->
+        <div class="page" id="page-24">
+            <div class="page-content">
+                <div class="w-full max-w-7xl flex flex-col md:flex-row gap-10">
+                    <div class="w-full md:w-1/2 glass rounded-sm relative overflow-hidden h-[550px] flex items-center justify-center border-4 border-pirate-red">
+                        <div class="absolute inset-0 bg-pirate-red/20 mix-blend-overlay"></div>
+                        <img src="https://images.unsplash.com/photo-1534062590117-6dbf8bc9cf92?q=80&w=1000" class="absolute inset-0 w-full h-full object-cover opacity-50 z-[-1] grayscale-[0.8]">
+                        <div class="z-10 text-center font-ui bg-black/90 p-8 rounded-sm border border-pirate-red shadow-[0_0_30px_rgba(136,0,0,0.6)]">
+                            <h3 class="text-5xl text-white mb-6 text-glow-red tracking-widest font-bold">INCOMING FIRE</h3>
+                            <i class="fa-solid fa-bomb text-7xl text-gray-400 animate-[pulse_1s_infinite]"></i>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/2 flex flex-col gap-8 justify-center">
+                        <div class="glass glass-panel p-10 font-body text-2xl text-white leading-relaxed border-l-4 border-pirate-red bg-black/80">
+                            
+                            <!-- Phase 1: Grammar -->
+                            <div id="rpg-grammar-phase">
+                                <p class="text-pirate-red font-bold text-2xl mb-6 tracking-widest uppercase text-glow-red font-ui">Phase 1: Load Cannons</p>
+                                <p class="mb-8 italic">"They say the enemy captain is ruthless."<br><br><i class="fa-solid fa-arrow-turn-down fa-rotate-90 mr-2 text-pirate-gold"></i>"The enemy captain <span class="text-pirate-gold font-bold underline">________</span> ruthless."</p>
+                                <div class="flex flex-col gap-4">
+                                    <button class="btn-pirate text-xl px-10 py-4 w-full" onclick="chargeAttack(true)">is said to be</button>
+                                    <button class="btn-pirate text-xl px-10 py-4 w-full" onclick="chargeAttack(false)">it is said to be</button>
+                                </div>
+                            </div>
+
+                            <!-- Phase 2: Dice Roll -->
+                            <div id="rpg-dice-phase" class="hidden text-center">
+                                <p class="text-green-400 font-bold text-2xl mb-4 tracking-widest uppercase font-ui">Phase 2: Fire!</p>
+                                <p class="text-2xl mb-8">Cannons Loaded! Roll the dice.<br><span class="text-gray-400 text-xl italic">(Roll 10 or higher to hit the hull)</span></p>
+                                
+                                <div class="flex justify-center items-center mb-8 bg-gray-900/50 p-6 rounded-sm border border-gray-700">
+                                    <i class="fa-solid fa-dice-d20 text-7xl text-pirate-gold" id="dice-icon"></i>
+                                    <span id="dice-result" class="text-6xl font-ui ml-8 text-white w-20 font-bold">-</span>
+                                </div>
+                                
+                                <button class="btn-pirate text-3xl px-12 py-5 w-full" onclick="rollAttackDice()" id="btn-roll">ROLL DICE</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- P25: RPG RESOLUTION (25) -->
+        <div class="page" id="page-25">
+            <div class="page-content text-center w-full max-w-5xl">
+                <i class="fa-solid fa-coins text-9xl text-pirate-gold mb-10 text-glow-gold"></i>
+                <h1 class="font-title text-[7rem] text-white mb-8">SHIP SUNK!</h1>
+                <p class="font-body text-4xl text-gray-300 mb-12 leading-relaxed">The enemy galleon descends into the depths. You claim their gold.</p>
+                <button onclick="jumpToPage(28)" class="btn-pirate text-3xl px-12 py-6 rounded-sm">DIVVY THE LOOT</button>
+            </div>
+        </div>
+
+        <!-- Extra padding pages to hit 30 precisely -->
+        <div class="page" id="page-26"><div class="page-content text-center"><h2 class="font-title text-6xl text-gray-600">Sailing...</h2></div></div>
+        <div class="page" id="page-27"><div class="page-content text-center"><h2 class="font-title text-6xl text-gray-600">Approaching Nassau...</h2></div></div>
+
+        <!-- P29: ENDING (28) -->
+        <div class="page" id="page-28">
+            <div class="page-content text-center w-full max-w-5xl relative">
+                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[20rem] text-pirate-gold opacity-5 font-title pointer-events-none select-none z-0"><i class="fa-brands fa-accessible-icon"></i></div>
+                
+                <div class="relative z-10 flex flex-col items-center">
+                    <i class="fa-solid fa-skull-crossbones text-[6rem] text-white mb-4 text-glow-white"></i>
+                    <h2 class="font-ui text-2xl text-gray-400 tracking-[0.5em] mb-2 uppercase font-bold">VICTORY</h2>
+                    <h1 class="font-title text-[6rem] text-pirate-gold mb-6 uppercase text-glow-gold" id="end-title">MASTER OF THE SEAS</h1>
+                    <div class="glass glass-panel p-12 inline-block text-left mb-10 min-w-[500px] border border-gray-600 shadow-[0_0_50px_rgba(255,255,255,0.1)]">
+                        <div class="font-ui text-3xl space-y-6 font-bold">
+                            <p class="flex justify-between text-gray-300">Captain: <span class="text-white" id="end-name">...</span></p>
+                            <p class="flex justify-between text-gray-300">Role: <span class="text-white" id="end-class">...</span></p>
+                            <p class="flex justify-between text-gray-300">Hull Integrity: <span class="text-green-500" id="end-hp">100%</span></p>
+                            <p class="flex justify-between text-gray-300">Gold Reales: <span class="text-pirate-gold text-glow-gold" id="end-xp">0</span></p>
+                        </div>
+                    </div>
+                    <br>
+                    <button onclick="location.reload()" class="btn-pirate text-2xl px-12 py-5 rounded-sm"><i class="fa-solid fa-rotate-right mr-4"></i> RETURN TO PORT</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="page" id="page-29"><div class="page-content text-center"><h2 class="font-title text-6xl text-gray-600">Fin.</h2></div></div>
+
+    </main>
+
+    <!-- NAVIGATION -->
+    <div class="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 flex gap-8 glass px-10 py-4 rounded-sm border border-gray-700 bg-black/90 shadow-[0_0_30px_rgba(0,0,0,0.9)]">
+        <button onclick="prevPage()" class="text-gray-400 hover:text-white transition-colors font-ui font-bold text-xl tracking-widest"><i class="fa-solid fa-chevron-left mr-3"></i> PREV</button>
+        <span class="font-ui font-bold text-white text-2xl tracking-[0.2em]" id="page-indicator">01 / 30</span>
+        <button onclick="nextPage()" class="text-gray-400 hover:text-white transition-colors font-ui font-bold text-xl tracking-widest">NEXT <i class="fa-solid fa-chevron-right ml-3"></i></button>
+    </div>
+
+    <script>
+        let currentO2 = 100;
+        let currentXP = 0;
+        let playerName = '';
+        let playerClass = '';
+        let classColor = '#ffffff';
+        let currentPageIndex = 0;
+        let isAnimating = false;
+        const pages = document.querySelectorAll('.page');
+        const maxPages = pages.length;
+
+        window.onload = () => {
+            pages.forEach((p, index) => { if(index !== 0) { p.classList.remove('active'); } });
+            createParticles();
+            updateHUD();
+            updateNav();
+        };
+
+        function updateHUD() {
+            document.getElementById('hp-bar').style.width = currentO2 + '%';
+            document.getElementById('hp-text').innerText = currentO2 + '%';
+            document.getElementById('xp-counter').innerText = currentXP;
+            document.getElementById('hud-player-name').innerText = playerName || '[ UNKNOWN ]';
+            document.getElementById('hud-player-class').innerText = playerClass || 'Swab';
+            
+            if(playerClass) {
+                document.getElementById('hud-player-class').style.color = classColor;
+            }
+
+            if(currentO2 <= 30) {
+                document.getElementById('hp-bar').classList.replace('bg-green-600', 'bg-red-600');
+                document.getElementById('hp-text').classList.replace('text-pirate-gold', 'text-red-500');
+                document.getElementById('hp-icon').classList.replace('text-pirate-gold', 'text-red-500');
+                document.getElementById('hp-icon').classList.add('animate-ping');
+            } else {
+                document.getElementById('hp-bar').classList.replace('bg-red-600', 'bg-green-600');
+                document.getElementById('hp-text').classList.replace('text-red-500', 'text-pirate-gold');
+                document.getElementById('hp-icon').classList.replace('text-red-500', 'text-pirate-gold');
+                document.getElementById('hp-icon').classList.remove('animate-ping');
+            }
+        }
+
+        function takeDamage(amount) {
+            currentO2 = Math.max(0, currentO2 - amount);
+            updateHUD();
+            const flash = document.getElementById('dmg-flash');
+            flash.className = 'dmg-overlay';
+            setTimeout(() => flash.className = '', 500);
+            document.body.classList.add('shake-fx');
+            setTimeout(() => document.body.classList.remove('shake-fx'), 400);
+            if(currentO2 === 0) jumpToPage(28); 
+        }
+
+        function addXP(amount) {
+            currentXP += amount;
+            updateHUD();
+            document.getElementById('xp-counter').classList.add('xp-gain');
+            setTimeout(() => document.getElementById('xp-counter').classList.remove('xp-gain'), 600);
+        }
+
+        function updateNav() {
+            document.getElementById('page-indicator').innerText = `${(currentPageIndex + 1).toString().padStart(2, '0')} / ${maxPages}`;
+            document.querySelectorAll('iframe').forEach(iframe => iframe.src = iframe.src);
+        }
+
+        function nextPage() {
+            if (currentPageIndex < maxPages - 1) {
+                pages[currentPageIndex].classList.remove('active');
+                currentPageIndex++;
+                pages[currentPageIndex].classList.add('active');
+                updateNav();
+                checkPageTriggers();
+            }
+        }
+
+        function prevPage() {
+            if (currentPageIndex > 0) {
+                pages[currentPageIndex].classList.remove('active');
+                currentPageIndex--;
+                pages[currentPageIndex].classList.add('active');
+                updateNav();
+                checkPageTriggers();
+            }
+        }
+
+        function jumpToPage(index) {
+            pages[currentPageIndex].classList.remove('active');
+            currentPageIndex = index;
+            pages[currentPageIndex].classList.add('active');
+            updateNav();
+            checkPageTriggers();
+        }
+
+        function checkPageTriggers() {
+            if (pages[currentPageIndex].id === 'page-23') renderClassChallenge();
+            
+            if (pages[currentPageIndex].id === 'page-24') {
+                document.getElementById('rpg-grammar-phase').classList.remove('hidden');
+                document.getElementById('rpg-dice-phase').classList.add('hidden');
+                document.getElementById('dice-result').innerText = "-";
+                document.getElementById('dice-result').classList.remove('text-green-400', 'text-pirate-red');
+                document.getElementById('dice-result').classList.add('text-white');
+                document.getElementById('btn-roll').innerText = "ROLL DICE";
+                document.getElementById('btn-roll').disabled = false;
+            }
+
+            if (pages[currentPageIndex].id === 'page-28') {
+                document.getElementById('end-name').innerText = playerName || 'Student';
+                document.getElementById('end-class').innerText = playerClass || 'Swab';
+                document.getElementById('end-class').style.color = classColor;
+                document.getElementById('end-hp').innerText = currentO2 + '%';
+                
+                if (currentO2 <= 30 && currentO2 > 0) {
+                    document.getElementById('end-hp').classList.replace('text-green-500', 'text-yellow-500');
+                } else if (currentO2 <= 0) {
+                    document.getElementById('end-hp').classList.replace('text-green-500', 'text-red-500');
+                }
+                
+                document.getElementById('end-xp').innerText = currentXP;
+                
+                if (currentO2 <= 0) {
+                    document.getElementById('end-title').innerText = "SUNK TO THE DEPTHS";
+                    document.getElementById('end-title').classList.replace('text-pirate-gold', 'text-gray-500');
+                    document.getElementById('end-title').classList.remove('text-glow-gold');
+                }
+            }
+        }
+
+        function selectClass(className, colorHex) {
+            playerClass = className;
+            classColor = colorHex;
+            document.querySelectorAll('#page-3 .glass-panel').forEach(el => {
+                el.style.backgroundColor = 'rgba(15, 23, 42, 0.75)';
+                el.style.borderColor = 'transparent';
+            });
+            
+            event.currentTarget.style.backgroundColor = colorHex + '33'; 
+            event.currentTarget.style.borderColor = colorHex;
+            
+            document.getElementById('name-input-section').classList.remove('hidden');
+            document.getElementById('name-input-section').classList.add('flex');
+            document.getElementById('player-name-input').focus();
+        }
+
+        function confirmAgent() {
+            const input = document.getElementById('player-name-input').value.trim();
+            if(input) {
+                playerName = input;
+                updateHUD();
+                addXP(100);
+                nextPage();
+            }
+        }
+
+        function cycleWord(element, wordsArray) {
+            let currentWord = element.innerText;
+            let index = wordsArray.indexOf(currentWord);
+            element.innerText = (index === -1 || index === wordsArray.length - 1) ? wordsArray[0] : wordsArray[index + 1];
+            element.classList.add('bg-white/20');
+            setTimeout(() => element.classList.remove('bg-white/20'), 200);
+        }
+
+        function revealVocabAdvanced(vocabId, element) {
+            document.getElementById(vocabId).classList.remove('hidden');
+            element.classList.add('opacity-30', 'pointer-events-none');
+            
+            const statusEl = document.getElementById('status-' + vocabId);
+            if(statusEl) {
+                statusEl.innerHTML = statusEl.innerHTML.replace('fa-lock', 'fa-lock-open');
+                statusEl.classList.replace('text-gray-500', 'text-white');
+                statusEl.classList.add('bg-white/20', 'shadow-[0_0_15px_rgba(255,255,255,0.4)]');
+            }
+            addXP(20);
+        }
+
+        function renderClassChallenge() {
+            const area = document.getElementById('class-challenge-area');
+            let content = "";
+            if(playerClass === 'QUARTERMASTER') {
+                content = `<div class="text-center"><i class="fa-solid fa-scroll text-7xl text-pirate-gold mb-6"></i><h3 class="font-title text-5xl mb-6 text-white">ORDER THE CREW</h3><p class="font-body text-2xl mb-8 text-gray-300">"Active: They report that the Navy is near."<br>Convert to Passive:</p><button class="btn-pirate text-2xl px-12 py-4 mr-4" onclick="handleClassGrammar(this, true)">It is reported that...</button><button class="btn-pirate text-2xl px-12 py-4" onclick="handleClassGrammar(this, false)">They are reported that...</button></div>`;
+            } else if(playerClass === 'MASTER GUNNER') {
+                content = `<div class="text-center"><i class="fa-solid fa-bomb text-7xl text-pirate-red mb-6"></i><h3 class="font-title text-5xl mb-6 text-white">LOAD THE CANNONS</h3><p class="font-body text-2xl mb-8 text-gray-300">"Active: People think the cannons are loaded."<br>Convert to Passive:</p><button class="btn-pirate text-2xl px-12 py-4 mr-4" onclick="handleClassGrammar(this, false)">People are thought...</button><button class="btn-pirate text-2xl px-12 py-4" onclick="handleClassGrammar(this, true)">It is thought that...</button></div>`;
+            } else {
+                content = `<div class="text-center"><i class="fa-regular fa-compass text-7xl text-cyan-500 mb-6"></i><h3 class="font-title text-5xl mb-6 text-white">NAVIGATE THE REEF</h3><p class="font-body text-2xl mb-8 text-gray-300">"Active: Sailors say Blackbeard hid his treasure here."<br>Convert to Passive:</p><button class="btn-pirate text-2xl px-12 py-4 mr-4" onclick="handleClassGrammar(this, true)">Blackbeard is said to have hidden...</button><button class="btn-pirate text-2xl px-12 py-4" onclick="handleClassGrammar(this, false)">It is said Blackbeard to hide...</button></div>`;
+            }
+            area.innerHTML = content;
+        }
+
+        function handleClassGrammar(btn, isCorrect) {
+            if(isCorrect) {
+                btn.classList.add('bg-white/50', 'border-white');
+                addXP(100);
+                setTimeout(() => nextPage(), 1000);
+            } else {
+                takeDamage(20);
+                btn.classList.add('bg-pirate-red/50', 'border-pirate-red', 'shake-fx');
+                setTimeout(() => btn.classList.remove('shake-fx', 'bg-pirate-red/50', 'border-pirate-red'), 1000);
+            }
+        }
+
+        // RPG Dice Combat Logic
+        function chargeAttack(isCorrect) {
+            const phase = document.getElementById('rpg-grammar-phase');
+            if (isCorrect) {
+                addXP(50);
+                phase.classList.add('hidden');
+                document.getElementById('rpg-dice-phase').classList.remove('hidden');
+            } else {
+                takeDamage(15);
+                phase.classList.add('shake-fx');
+                setTimeout(() => phase.classList.remove('shake-fx'), 500);
+            }
+        }
+
+        function rollAttackDice() {
+            const btn = document.getElementById('btn-roll');
+            btn.disabled = true;
+            const diceIcon = document.getElementById('dice-icon');
+            const diceResult = document.getElementById('dice-result');
+            
+            diceIcon.classList.add('fa-spin');
+            diceResult.classList.remove('text-green-400', 'text-pirate-red');
+            diceResult.classList.add('text-white');
+            diceResult.innerText = "?";
+            
+            setTimeout(() => {
+                diceIcon.classList.remove('fa-spin');
+                const roll = Math.floor(Math.random() * 20) + 1;
+                diceResult.innerText = roll;
+                
+                if (roll >= 10) {
+                    diceResult.classList.add('text-green-400');
+                    diceResult.classList.remove('text-white');
+                    addXP(200);
+                    btn.innerText = "DIRECT HIT!";
+                    setTimeout(() => nextPage(), 2000);
+                } else {
+                    diceResult.classList.add('text-pirate-red');
+                    diceResult.classList.remove('text-white');
+                    takeDamage(20);
+                    btn.innerText = "MISS! FIRE AGAIN";
+                    btn.disabled = false;
+                }
+            }, 1200);
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                const req = document.documentElement.requestFullscreen();
+                if (req) req.catch(err => console.warn(err));
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+
+        function toggleDMTools() { document.getElementById('dm-panel').classList.toggle('hidden'); document.getElementById('dm-panel').classList.toggle('flex'); }
+        function toggleWhiteboard() { document.getElementById('whiteboard-panel').classList.toggle('hidden'); document.getElementById('whiteboard-panel').classList.toggle('flex'); }
+        function clearWhiteboard() { document.getElementById('wb-textarea').value = ''; }
+
+        let dmTimer; let dmSecs = 0;
+        document.getElementById('btn-timer-start').onclick = () => { clearInterval(dmTimer); dmTimer = setInterval(() => { dmSecs++; document.getElementById('dm-timer-display').innerText = `${String(Math.floor(dmSecs/60)).padStart(2,'0')}:${String(dmSecs%60).padStart(2,'0')}`; }, 1000); };
+        document.getElementById('btn-timer-stop').onclick = () => { clearInterval(dmTimer); dmSecs = 0; document.getElementById('dm-timer-display').innerText = "00:00"; };
+
+        function createParticles() {
+            const container = document.getElementById('particle-container');
+            // Embers
+            for(let i=0; i<30; i++) {
+                let p = document.createElement('div'); p.className = 'particle-ember';
+                let size = Math.random() * 4 + 2; p.style.width = size + 'px'; p.style.height = size + 'px';
+                p.style.left = Math.random() * 100 + 'vw'; p.style.animationDuration = (Math.random() * 8 + 4) + 's';
+                p.style.animationDelay = (Math.random() * 5) + 's'; container.appendChild(p);
+            }
+        }
+
+        // Trial 1 Matching Logic
+        let selectedMatch = null;
+        document.querySelectorAll('.match-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if(this.classList.contains('matched')) return;
+                if(!selectedMatch) { 
+                    selectedMatch = this; 
+                    this.classList.add('border-white', 'bg-white/20'); 
+                } 
+                else {
+                    if(this.parentElement.id === selectedMatch.parentElement.id) {
+                        selectedMatch.classList.remove('border-white', 'bg-white/20');
+                        selectedMatch = this;
+                        this.classList.add('border-white', 'bg-white/20');
+                    } else {
+                        if(this.dataset.match === selectedMatch.dataset.match) {
+                            this.classList.add('bg-green-700/50', 'matched', 'text-green-400'); 
+                            this.classList.replace('border-transparent', 'border-green-500');
+                            selectedMatch.classList.add('bg-green-700/50', 'matched', 'text-green-400');
+                            selectedMatch.classList.replace('border-white', 'border-green-500');
+                            addXP(50); selectedMatch = null;
+                        } else { 
+                            takeDamage(10); 
+                            this.classList.add('bg-pirate-red/50', 'border-pirate-red');
+                            setTimeout(() => {
+                                this.classList.remove('bg-pirate-red/50', 'border-pirate-red');
+                                selectedMatch.classList.remove('border-white', 'bg-white/20'); 
+                                selectedMatch = null; 
+                            }, 500);
+                        }
+                    }
+                }
+            });
+        });
+
+        // MCQ Generic Check
+        function checkExercise(btn, isCorrect, type) {
+            if (isAnimating) return;
+            isAnimating = true;
+            if(isCorrect) {
+                btn.classList.add('bg-green-600/50', 'border-green-500');
+                addXP(50);
+                setTimeout(() => { isAnimating = false; btn.classList.remove('bg-green-600/50', 'border-green-500'); }, 1000);
+            } else {
+                takeDamage(15);
+                btn.classList.add('bg-pirate-red/50', 'border-pirate-red', 'shake-fx');
+                setTimeout(() => { isAnimating = false; btn.classList.remove('bg-pirate-red/50', 'border-pirate-red', 'shake-fx'); }, 1000);
+            }
+        }
+
+        // Sentence Builders
+        document.querySelectorAll('.builder-word').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const prefix = this.parentElement.id.split('-')[0];
+                const answerBox = document.getElementById(prefix + '-answer');
+                const bankBox = document.getElementById(prefix + '-bank');
+                const checkBtn = document.getElementById(prefix + '-check');
+                
+                if(this.parentElement.id.includes('bank')) { answerBox.appendChild(this); } 
+                else { bankBox.appendChild(this); }
+                
+                if(answerBox.children.length === 5) { checkBtn.classList.remove('hidden'); } 
+                else { checkBtn.classList.add('hidden'); }
+            });
+        });
+
+        function resetBuilder(prefix) {
+            const answerBox = document.getElementById(prefix + '-answer');
+            const bankBox = document.getElementById(prefix + '-bank');
+            Array.from(answerBox.children).forEach(child => bankBox.appendChild(child));
+            document.getElementById(prefix + '-check').classList.add('hidden');
+            answerBox.classList.remove('border-green-500', 'border-pirate-red');
+        }
+
+        function checkBuilder(prefix, correctOrderArray) {
+            const answerBox = document.getElementById(prefix + '-answer');
+            const currentOrder = Array.from(answerBox.children).map(child => child.innerText);
+            let isCorrect = true;
+            for(let i=0; i<correctOrderArray.length; i++){ if(currentOrder[i] !== correctOrderArray[i]) isCorrect = false; }
+
+            if(isCorrect) {
+                answerBox.classList.replace('border-dashed', 'border-solid');
+                answerBox.classList.replace('border-gray-600', 'border-green-500');
+                addXP(100);
+            } else {
+                takeDamage(20);
+                answerBox.classList.replace('border-gray-600', 'border-pirate-red');
+                setTimeout(() => { answerBox.classList.replace('border-pirate-red', 'border-gray-600'); }, 1000);
+            }
+        }
+
+        function fixAnomaly(element, correction) {
+            element.innerText = correction;
+            element.classList.replace('text-pirate-red', 'text-pirate-gold');
+            element.classList.replace('border-pirate-red', 'border-pirate-gold');
+            element.classList.remove('hover:bg-pirate-red/20', 'cursor-pointer');
+            element.onclick = null;
+            addXP(30);
+            element.style.animation = 'pulse-gold 0.5s ease';
+        }
+    </script>
+</body>
+</html>
